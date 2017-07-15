@@ -1,2 +1,2 @@
-# x-virus
-A terminal game by Rust.
+# Cicada
+A HTTP Server by Rust.
