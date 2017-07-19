@@ -1,6 +1,7 @@
 use std::net::{TcpListener, TcpStream};
 use std::io::Read;
 use std::io::Write;
+use std::thread;
 
 pub fn listen(port: String) {
     let listener = TcpListener::bind(format!("127.0.0.1:{}", port)).unwrap();
@@ -29,7 +30,9 @@ pub fn listen(port: String) {
     for stream in listener.incoming() {
         match stream {
             Ok(stream) => {
-                handle_client(stream);
+                thread::spawn(move || {
+                    handle_client(stream);
+                });
             }
             Err(e) => {
                 println!("error: {}", e)
