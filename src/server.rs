@@ -20,13 +20,11 @@ pub fn listen(port: String) {
                 },
             };
             println!("{}", String::from_utf8(buf.to_vec()).unwrap());
-            let response = b"HTTP/1.1 200 OK
-Date: Thu, 20 Jul 2017 05:41:19 GMT
-Content-length: 2
-Content-type: application/json
-
-ok";
-
+            let response = b"HTTP/1.1 200 OK\n\r\
+                             Date: Thu, 20 Jul 2017 05:41:19 GMT\n\r\
+                             Content-length: 2\n\r\
+                             Content-type: application/json\n\r\n\r\
+                             ok";
             match stream.write(response) {
                 Err(_) => break,
                 Ok(_) => break,
