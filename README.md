@@ -1,2 +1,2 @@
 # Cicada
-An HTTP Server by Rust.
+An HTTP/2 lib by Rust.
