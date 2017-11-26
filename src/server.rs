@@ -2,11 +2,12 @@ use std::net::{TcpListener, TcpStream};
 use std::io::Read;
 use std::io::Write;
 use std::thread;
+use std::fs::File;
 
-pub fn listen(port: String) {
+pub fn listen(port: String, path: String) {
     let listener = TcpListener::bind(format!("127.0.0.1:{}", port)).unwrap();
 
-    fn handle_client(mut stream: TcpStream) {
+    fn handle_client(mut stream: TcpStream, path: String) {
         let mut buf;
         loop {
             buf = [0; 512];
@@ -19,12 +20,18 @@ pub fn listen(port: String) {
                     m
                 },
             };
-            println!("{}", String::from_utf8(buf.to_vec()).unwrap());
-            let response = b"HTTP/1.1 200 OK\n \
+
+            let mut file = File::open(path).unwrap();
+            let mut buffer = String::new();
+
+            file.read_to_string(&mut buffer);
+
+            let response = format!("HTTP/1.1 200 OK\n \
                             Date: Thu, 20 Jul 2017 05:41:19 GMT\n \
-                            Content-length: 2\n \
-                            Content-type: application/json\n\nok";
-            match stream.write(response) {
+                            Content-length: 12\n \
+                            Content-type: text/html\n\n{}", buffer);
+
+            match stream.write(response.as_bytes()) {
                 Err(_) => break,
                 Ok(_) => break,
             }
@@ -34,8 +41,9 @@ pub fn listen(port: String) {
     for stream in listener.incoming() {
         match stream {
             Ok(stream) => {
+                let path = path.clone();
                 thread::spawn(move || {
-                    handle_client(stream);
+                    handle_client(stream, path);
                 });
             }
             Err(e) => {
